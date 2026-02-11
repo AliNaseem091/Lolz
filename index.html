@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --bg-color: #fcf5e5;
+            --primary-color: #ff6b6b;
+            --secondary-color: #389c96;
+            --text-color: #555;
+            --polaroid-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none; /* Hide default cursor for custom cursor */
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Forest Background */
+        .forest-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(to bottom, #ffd6e8 0%, #ffe5f0 50%, #d4f1d4 100%);
+        }
+
+        /* Background Trees - Now using actual images */
+        .tree-image {
+            position: fixed;
+            bottom: 0;
+            z-index: -1;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            font-size: 200px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .tree-image:hover {
+            transform: scale(1.05);
+        }
+
+        .tree-left {
+            left: 20px;
+        }
+
+        .tree-right {
+            right: 20px;
+        }
+
+        /* Easter Egg decorative elements */
+        .easter-egg {
+            position: fixed;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 5;
+            font-size: 60px;
+        }
+
+        .easter-egg:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .egg-1 {
+            top: 20%;
+            left: 15%;
+        }
+
+        .egg-2 {
+            top: 30%;
+            right: 15%;
+        }
+
+        .egg-3 {
+            bottom: 25%;
+            left: 10%;
+        }
+
+        .egg-4 {
+            bottom: 30%;
+            right: 12%;
+        }
+
+        /* Cloud decorations */
+        .cloud-decoration {
+            position: fixed;
+            cursor: pointer;
+            z-index: 4;
+            transition: transform 0.3s ease;
+            font-size: 80px;
+        }
+
+        .cloud-decoration:hover {
+            transform: translateY(-5px);
+        }
+
+        .cloud-1 {
+            top: 10%;
+            left: 20%;
+        }
+
+        .cloud-2 {
+            top: 15%;
+            right: 25%;
+        }
+
+        /* Falling hearts from trees */
+        @keyframes fall-hearts {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .falling-heart {
+            position: fixed;
+            font-size: 20px;
+            animation: fall-hearts 8s linear infinite;
+            z-index: 1;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            font-size: 12px;
+            pointer-events: none;
+            animation: fade-out 1s forwards;
+            z-index: 9999;
+        }
+
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) translateY(-20px);
+            }
+        }
+
+        /* Balloons */
+        .balloon {
+            position: fixed;
+            width: 60px;
+            height: 80px;
+            z-index: 2;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .balloon-shape {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #ff9999, #ff6b6b);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+        }
+
+        .balloon-shape::before {
+            content: '❤️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+
+        .balloon-string {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background: #ff6b6b;
+            transform-origin: top;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-25vh) translateX(10px);
+            }
+            50% {
+                transform: translateY(-50vh) translateX(-5px);
+            }
+            75% {
+                transform: translateY(-75vh) translateX(8px);
+            }
+            100% {
+                transform: translateY(-110vh) translateX(0);
+            }
+        }
+
+        .balloon.floating {
+            animation: float-up 15s linear infinite;
+        }
+
+        .balloon.popped {
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Speech Bubble for Easter Eggs */
+        .speech-bubble {
+            position: fixed;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 1rem;
+            max-width: 250px;
+            z-index: 10001;
+            animation: bubble-appear 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+
+        @keyframes bubble-appear {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Song Dedication Modal */
+        .dedication-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10004;
+            cursor: auto;
+        }
+
+        .dedication-modal.active {
+            display: flex;
+        }
+
+        .dedication-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            cursor: auto;
+            animation: dedication-appear 0.5s ease-out;
+        }
+
+        @keyframes dedication-appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .dedication-container h2 {
+            font-family: 'Pacifico', cursive;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dedication-message {
+            color: white;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .dedication-play-btn {
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .dedication-play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Lyrics Display */
+        .lyrics-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 80%;
+            min-width: 500px;
+            text-align: center;
+            z-index: 9998;
+            display: none;
+            cursor: auto;
+        }
+
+        .lyrics-container.active {
+            display: block;
+            animation: lyrics-slide-up 0.5s ease-out;
+        }
+
+        @keyframes lyrics-slide-up {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .lyrics-text {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            line-height: 1.8;
+            min-height: 60px;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .current-word {
+            color: #667eea;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(102, 126, 234, 0.3);
+            animation: word-pulse 0.3s ease;
+        }
+
+        @keyframes word-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Message Input Modal */
+        .message-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10003;
+            cursor: auto;
+        }
+
+        .message-modal.active {
+            display: flex;
+        }
+
+        .message-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            cursor: auto;
+        }
+
+        .message-container h2 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .message-container p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .message-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            cursor: text;
+            margin-bottom: 20px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .message-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .message-submit, .message-cancel {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .message-submit {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .message-submit:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        .message-cancel {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .message-cancel:hover {
+            background: #d0d0d0;
+            transform: scale(1.05);
+        }
+
+        /* Quiz Modal */
+        .quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10002;
+            cursor: auto;
+        }
+
+        .quiz-modal.active {
+            display: flex;
+        }
+
+        .quiz-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            cursor: auto;
+        }
+
+        .quiz-container h2 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            padding: 15px 25px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .quiz-option:hover {
+            background: #e8e8e8;
+            border-color: var(--primary-color);
+        }
+
+        .quiz-option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #45a049;
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #da190b;
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            min-height: 30px;
+        }
+
+        .quiz-feedback.correct {
+            color: #4CAF50;
+        }
+
+        .quiz-feedback.incorrect {
+            color: #f44336;
+        }
+
+        .quiz-close {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .quiz-close:hover {
+            background: #ff5252;
+        }
+
+        /* --- SCREEN 1: PROPOSAL --- */
+        #proposal-container {
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+            transition: opacity 0.5s ease;
+            position: relative;
+            z-index: 10;
+            background-color: rgba(92, 65, 65, 0.2);
+        }
+
+        .bear-img {
+            width: 250px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite ease-in-out;
+            transition: filter 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .message-box {
+            min-height: 30px;
+            margin-bottom: 20px;
+            font-weight: 1000;
+            font-size: 1.6rem;
+            color: var(--secondary-color);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #yes-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #yes-btn:hover {
+            transform: scale(1.1);
+            background-color: #ff5252;
+        }
+
+        #no-btn {
+            background-color: #e0e0e0;
+            color: #555;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        #no-btn:hover {
+            background-color: #d6d6d6;
+        }
+
+        /* --- SCREEN 2: CELEBRATION --- */
+        #celebration-container {
+            display: none;
+            text-align: center;
+            width: 100%;
+            padding: 40px 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            position: relative;
+            z-index: 10;
+        }
+
+        .love-letter {
+            background: white;
+            padding: 50px 40px 0px 40px; ;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            line-height: 1.6;
+            font-size: 1.1rem;
+            position: relative;
+        }
+        
+        .love-letter::before {
+            content: '💌';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+        }
+
+        /* Polaroid Grid */
+        .gallery {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding-bottom: 50px;
+        }
+
+        .polaroid {
+            background: var(--polaroid-bg);
+            padding: 15px 15px 40px 15px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease;
+            width: 250px;
+        }
+
+        .polaroid:nth-child(even) {
+            transform: rotate(2deg);
+            margin-top: 20px;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .caption {
+            font-family: 'Pacifico', cursive;
+            color: #888;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Flower Petal Animation - Full Screen */
+        .flower-petal {
+            position: fixed;
+            font-size: 25px;
+            animation: fall-petals 4s ease-in forwards;
+            z-index: 999;
+        }
+
+        @keyframes fall-petals {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .bear-img { width: 180px; }
+            .polaroid { width: 90%; }
+            .tree-image { font-size: 120px; }
+            .easter-egg { font-size: 40px; }
+            .cloud-decoration { font-size: 50px; }
+            .quiz-container { padding: 25px; }
+            .quiz-question { font-size: 1.1rem; }
+            .message-container { padding: 25px; }
+            .lyrics-container { min-width: 90%; padding: 20px; }
+            .lyrics-text { font-size: 1.2rem; }
+            .dedication-container { padding: 30px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Forest Background -->
+    <div class="forest-background"></div>
+
+    <!-- Tree Emojis -->
+    <div class="tree-image tree-left" id="tree-left">🌳</div>
+    <div class="tree-image tree-right" id="tree-right">🌲</div>
+
+    <!-- Cloud Decorations -->
+    <div class="cloud-decoration cloud-1" id="cloud-1">☁️</div>
+    <div class="cloud-decoration cloud-2" id="cloud-2">☁️</div>
+
+    <!-- Easter Egg Decorations -->
+    <div class="easter-egg egg-1" id="egg-1">🥚</div>
+    <div class="easter-egg egg-2" id="egg-2">🐣</div>
+    <div class="easter-egg egg-3" id="egg-3">🐰</div>
+    <div class="easter-egg egg-4" id="egg-4">🌷</div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor">🎈</div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="background-music" loop>
+        <source src="your-song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Toggle -->
+    <button class="music-toggle" id="music-toggle" onclick="toggleMusic()">🎵 Play Music</button>
+
+    <!-- Song Dedication Modal -->
+    <div class="dedication-modal" id="dedication-modal">
+        <div class="dedication-container">
+            <h2>🎵 A Song For You 🎵</h2>
+            <div class="dedication-message" id="dedication-message">
+                This song is "Thinking Out Loud" by Ed Sheeran, dedicated to you, my love. 
+                Every word, every note is for you. You are the melody in my heart, 
+                and I want to share this with you. 💖
+            </div>
+            <button class="dedication-play-btn" onclick="startSongWithLyrics()">Play Song ▶️</button>
+        </div>
+    </div>
+
+    <!-- Lyrics Display Container -->
+    <div class="lyrics-container" id="lyrics-container">
+        <div class="lyrics-text" id="lyrics-text"></div>
+    </div>
+
+    <!-- Message Input Modal -->
+    <div class="message-modal" id="message-modal">
+        <div class="message-container">
+            <h2>💌 Write Your Heart Out 💌</h2>
+            <p>Do you want to say anything or write something special for us? 💕</p>
+            <textarea 
+                class="message-input" 
+                id="message-input" 
+                placeholder="Type your message here..."
+            ></textarea>
+            <div class="message-buttons">
+                <button class="message-submit" onclick="submitMessage()">Submit ❤️</button>
+                <button class="message-cancel" onclick="closeMessageModal1()">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="quiz-modal" id="quiz-modal">
+        <div class="quiz-container">
+            <h2>💝 Love Quiz 💝</h2>
+            <div class="quiz-question" id="quiz-question"></div>
+            <div class="quiz-options" id="quiz-options"></div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
+            <button class="quiz-close" id="quiz-close" onclick="closeQuiz()">Close</button>
+        </div>
+    </div>
+
+    <!-- Proposal Screen -->
+    <div id="proposal-container">
+        <img id="bear-img" src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f643/512.png" alt="Cute Bear" class="bear-img">
+        
+        <h1>Will you be my Valentine?</h1>
+        
+        <div class="message-box" id="message-box"></div>
+
+        <div class="buttons">
+            <button id="yes-btn" onclick="acceptProposal()">Yes!</button>
+            <button id="no-btn" onmouseenter="handleNoHover()" onclick="handleNoClick()">No</button>
+        </div>
+    </div>
+
+    <!-- Celebration Screen -->
+    <div id="celebration-container">
+        <h1>WOOHHHOOO, YAYAYAYASS! ❤️</h1>
+        <p style="margin-bottom: 30px; font-size: 1.2rem;">Hehe, I knew you'd say yes! (Eventually...)</p>
+
+        <div class="love-letter">
+            <p>
+                <strong>My Dear Aliza Batool Zafar,</strong><br><br>
+                I cannot imagine spending this day without you. You make my world brighter, my laugh louder, and my smile wider. 
+                I promise to get you your favorite chocolates and be the best Valentine ever. 
+                Let's make some amazing memories together!
+                <br><br>
+                Love,<br>
+                <strong>Ali Naseem</strong>
+            </p>
+        </div>
+
+        <div class="gallery">
+            <div class="polaroid">
+                <img src="./Cute.jpeg" alt="Us">
+                <div class="caption"></div>
+            </div>
+            
+            <div class="polaroid">
+                <img src="Portrait.jpg" alt="Us">
+                <div class="caption">Just a Man, Admiring his Wife 💗</div>
+            </div>
+
+            <div class="polaroid">
+                <img src="chaos.jpg" alt="Us">
+                <div class="caption">Founded Chaos</div>
+            </div>
+            <div class="polaroid">
+                <img src="Peace.jpg" alt="Us">
+                <div class="caption">and Peace</div>
+            </div>
+            <div class="polaroid">
+                <img src="person.jpeg" alt="Us">
+                <div class="caption">In the Same person</div>
+            </div>
+            <div class="polaroid">
+                <img src="cutesy.jpeg" alt="Us">
+                <div class="caption">I love Us</div>
+
+            </div>
+        </div>
+        <div class="love-letter">
+            <p>
+                <strong>Aliza Batool Zafar,</strong><br><br>
+                Hiiii, My Cutie Babyyyy, I just wanted to say that I love you so much, I can't even put it into words. You are the most amazing person in my life and I'm so grateful to have you in my life as my best friend as my wife, and forever grateful that you chose me as your man, your husband, your everything. I just Love you sooooo damn much, I can't even imagine my life without you. You are my world, my sunshine, and my everything. I just can not find the words to describe the situation I'm in, the way I love you and the way my Love just keep increasing immensely for you every single day, I just want to spend the rest of my life making you happy and being there for you through everything. I love you more than words can say, and I can't wait to see what the future holds for us together. You are the most amazing person I have ever met in my life or I ever would've, You are just so perfect, as a friend, as a wife, just as a person, just the way you exist is so fucking perfect, You possess a perfectly beautiful soul and just a perfectly beautiful heart, and I just love you so much for being you, for being the most amazing person in my life, for being the best thing that ever happened to me, for being my everything. I just want to say thank you for being in my life, for loving me, for choosing me, and for being the most amazing person in the world. I love you so much, and I can't wait to spend the rest of my life with you. You are my forever Valentine, and I will love you forever and always. Thanks for choosing me as your Valentine this year, and I hope, Really really really hope that we are each other's Valentine forever and always.I wish, hope and pray that as long as we live we hold onto each other and love each other, Our love for each other just keeps increasing and we stay the same, immature idiots for each other, no matter what life throws at us we stick together and fight through it together. You are the most amazing person in my life and my favorite-estestest person, I love you soooooooooooooooooooooooo sooooooooooooooooooooooooooo mmmmmuuuuuuuccccccccccchhhhhhhhhhhhhhhhhhhhhhhhhh. Once again, thanks for choosing me as your Husband, as your Best Friend, as your Partner and your valentine this year 🙃💗. I love being your Baby, so keep babying me forever, don't ever change, even a little bit or otherwise your Baby will Cry 😔, You don't want that now Do you? With this I would like to end my yapathon and would just say it once again that I love you soo much and I'll always keep doing so and you keep slaying like you always do and keep giving it your all. You are an amazing person and a very very very very very strong independent Ladiz, I am very very proud of all the things that you have accomplished and I always will be proud of you for the things you have yet to accomplish. You are doing a very great Job, The best a human could possibly do, So Never ever doubt yourself and trust yourself, love yourself the mostest and don't let others change the way you think about yourself or discourage you or don't let them do anything at all. It's you life and you'll decide how you live it, Even if someone says anything about you, You know yourself better then anyone ever could, So Just trust yourself and keep going. I'm here for your support and I always will be there right besdie you. Always and Forever, you'll find me right beside yourself supporting you and beleiving in you, You got this Buddy 😽💗. LOTSSSSSSS AND LOTTTTTTTSSSSSSSSSSSSSSSSSSSSSSSSSSS OF LOVE FOR YOU BY YOUR MAN AND A LOT OF PAPPPPPPYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY, INFINTE AMOUNT OF BOTH OF THESE THINGG.
+                UMMMMUUUUUUAAAAAAAAAAAAAWWW 😽😽😽😽💗💗💗
+                BAIIIIIIIII BAIIIIIIIIII NOW MY PRINCESS 😽😽💗💗
+                <br><br>
+                Your Husband,<br>
+                <strong>Ali Naseem</strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ========== VARIABLES ==========
+        const noTexts = [
+            "Are you sure?",
+            "Did you think this through?",
+            "I'll buy you chocolate...",
+            "Don't break my heart! 💔",
+            "Pretty please? 🥺",
+            "I'm gonna cry...",
+            "You're clicking the wrong button!",
+            "Okay, last chance!",
+            "Seriously? :("
+        ];
+
+        const sassTexts = [
+            "Nuhh Uhhh, That's not the button you should be looking for 🙃",
+            "Why are you trying to say NO ☹️",
+            "Are you sure? Maybe look to the left? 👈",
+            "Close, but no cigar! Try again! 💃"
+        ];
+
+        let clickCount = 0;
+        let hoverCount = 0;
+        let noButtonMovable = true;
+        const noBtn = document.getElementById('no-btn');
+        const yesBtn = document.getElementById('yes-btn');
+        const messageBox = document.getElementById('message-box');
+        const proposalContainer = document.getElementById('proposal-container');
+        const celebrationContainer = document.getElementById('celebration-container');
+        const bearImg = document.getElementById('bear-img');
+
+        // Music and Lyrics
+        const audioElement = document.getElementById('background-music');
+        let musicPlaying = false;
+        let lyricsData = [];
+        let currentLyricIndex = 0;
+        let lyricsInterval = null;
+
+        // ========== LYRICS CONFIGURATION - "Thinking Out Loud" by Ed Sheeran ==========
+        // Lyrics are timed to match the original song (approximately 281 seconds / 4:41)
+        const lyrics = [
+            { time: 0, text: "🎵 Thinking Out Loud - Ed Sheeran 🎵" },
+            { time: 14, text: "When your legs don't work" },
+            { time: 17, text: "like they used to before" },
+            { time: 20, text: "And I can't sweep you" },
+            { time: 22, text: "off of your feet" },
+            { time: 25, text: "Will your mouth still remember" },
+            { time: 28, text: "the taste of my love?" },
+            { time: 31, text: "Will your eyes still smile" },
+            { time: 34, text: "from your cheeks?" },
+            { time: 37, text: "And, darling, I will" },
+            { time: 40, text: "be loving you 'til we're 70" },
+            { time: 45, text: "And, baby, my heart" },
+            { time: 48, text: "could still fall as hard at 23" },
+            { time: 53, text: "And I'm thinking 'bout how" },
+            { time: 57, text: "people fall in love" },
+            { time: 60, text: "in mysterious ways" },
+            { time: 63, text: "Maybe just the touch of a hand" },
+            { time: 68, text: "Well, me, I fall in love" },
+            { time: 71, text: "with you every single day" },
+            { time: 75, text: "And I just wanna tell you I am" },
+            { time: 80, text: "So, honey, now" },
+            { time: 83, text: "take me into your loving arms" },
+            { time: 89, text: "Kiss me under the light" },
+            { time: 92, text: "of a thousand stars" },
+            { time: 96, text: "Place your head" },
+            { time: 98, text: "on my beating heart" },
+            { time: 102, text: "I'm thinking out loud" },
+            { time: 105, text: "Maybe we found love" },
+            { time: 109, text: "right where we are" },
+            { time: 115, text: "💕" },
+            { time: 127, text: "When my hair's all but gone" },
+            { time: 130, text: "and my memory fades" },
+            { time: 133, text: "And the crowds don't remember" },
+            { time: 136, text: "my name" },
+            { time: 139, text: "When my hands don't play" },
+            { time: 142, text: "the strings the same way" },
+            { time: 145, text: "I know you will still" },
+            { time: 148, text: "love me the same" },
+            { time: 151, text: "'Cause, honey, your soul" },
+            { time: 154, text: "could never grow old" },
+            { time: 157, text: "it's evergreen" },
+            { time: 161, text: "And, baby, your smile's" },
+            { time: 164, text: "forever in my mind" },
+            { time: 167, text: "and memory" },
+            { time: 170, text: "I'm thinking 'bout how" },
+            { time: 173, text: "people fall in love" },
+            { time: 176, text: "in mysterious ways" },
+            { time: 179, text: "And maybe it's all" },
+            { time: 182, text: "part of a plan" },
+            { time: 185, text: "Well, I'll just keep on making" },
+            { time: 188, text: "the same mistakes" },
+            { time: 191, text: "hoping that you'll understand" },
+            { time: 196, text: "That, baby, now" },
+            { time: 199, text: "take me into your loving arms" },
+            { time: 205, text: "Kiss me under the light" },
+            { time: 208, text: "of a thousand stars" },
+            { time: 212, text: "Place your head" },
+            { time: 214, text: "on my beating heart" },
+            { time: 218, text: "I'm thinking out loud" },
+            { time: 221, text: "And maybe we found love" },
+            { time: 225, text: "right where we are" },
+            { time: 231, text: "💖" },
+            { time: 241, text: "So, baby, now" },
+            { time: 244, text: "take me into your loving arms" },
+            { time: 250, text: "Kiss me under the light" },
+            { time: 253, text: "of a thousand stars" },
+            { time: 257, text: "Oh, darling, place your head" },
+            { time: 260, text: "on my beating heart" },
+            { time: 264, text: "I'm thinking out loud" },
+            { time: 267, text: "That maybe we found love" },
+            { time: 271, text: "right where we are" },
+            { time: 276, text: "💝 Forever and Always 💝" }
+        ];
+
+        // Initialize lyrics data
+        lyricsData = lyrics;
+
+        // Position No button initially
+        positionNoButton();
+
+        function positionNoButton() {
+            const container = document.getElementById('proposal-container');
+            const containerRect = container.getBoundingClientRect();
+            const yesRect = yesBtn.getBoundingClientRect();
+            
+            // Position to the right of Yes button
+            noBtn.style.left = (yesRect.right - containerRect.left + 20) + 'px';
+            noBtn.style.top = (yesRect.top - containerRect.top) + 'px';
+        }
+
+        // ========== SONG DEDICATION AND LYRICS ==========
+        function showDedicationModal() {
+            document.getElementById('dedication-modal').classList.add('active');
+        }
+
+        function startSongWithLyrics() {
+            // Close dedication modal
+            document.getElementById('dedication-modal').classList.remove('active');
+            
+            // Show lyrics container
+            document.getElementById('lyrics-container').classList.add('active');
+            
+            // Start playing music
+            audioElement.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('music-toggle').textContent = '🎵 Pause Music';
+                
+                // Start lyrics synchronization
+                startLyricsSync();
+            }).catch(error => {
+                console.error('Error playing audio:', error);
+                alert('Could not play music. Please make sure you have an MP3 file named "your-song.mp3" in the same directory!');
+            });
+        }
+
+        function startLyricsSync() {
+            currentLyricIndex = 0;
+            
+            // Update lyrics based on song time
+            audioElement.addEventListener('timeupdate', updateLyrics);
+        }
+
+        function updateLyrics() {
+            const currentTime = audioElement.currentTime;
+            
+            // Find the appropriate lyric for current time
+            for (let i = 0; i < lyricsData.length; i++) {
+                if (currentTime >= lyricsData[i].time && 
+                    (i === lyricsData.length - 1 || currentTime < lyricsData[i + 1].time)) {
+                    
+                    if (currentLyricIndex !== i) {
+                        currentLyricIndex = i;
+                        displayLyric(lyricsData[i].text);
+                    }
+                    break;
+                }
+            }
+        }
+
+        function displayLyric(text) {
+            const lyricsElement = document.getElementById('lyrics-text');
+            
+            // Split text into words and display them with animation
+            const words = text.split(' ');
+            let wordIndex = 0;
+            
+            // Clear previous content
+            lyricsElement.innerHTML = '';
+            
+            // Add words one by one
+            const wordInterval = setInterval(() => {
+                if (wordIndex < words.length) {
+                    const span = document.createElement('span');
+                    span.className = 'current-word';
+                    span.textContent = words[wordIndex] + ' ';
+                    lyricsElement.appendChild(span);
+                    
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        span.classList.remove('current-word');
+                    }, 300);
+                    
+                    wordIndex++;
+                } else {
+                    clearInterval(wordInterval);
+                }
+            }, 200); // 200ms between each word
+        }
+
+        // ========== MESSAGE INPUT FUNCTIONALITY ==========
+        function openMessageModal() {
+            document.getElementById('message-modal').classList.add('active');
+            document.getElementById('message-input').value = '';
+        }
+
+       function closeMessageModal1()
+       {  
+        alert('HAWWWWWWWWWWWWWWW, KUCH TO LIKH DE, WAI YOU HATINGS ME SO MUCHS, WAIIIIIIIIIIIII, I IZ LOVE YOU AND YOU IZ NOT SAYS ANYTHING ABOUT US, ABOUT ME 😔😔😔, SED HO GAYA MEIN, NOW BABY ME, YOU GOTTA CODDLE WITH ME NOW 😔👉👈, AM I NOT YOUR BABY ANYMORE? 🥺')
+       }
+
+        function closeMessageModal() {
+            document.getElementById('message-modal').classList.remove('active');
+        }
+
+        function submitMessage() {
+            const message = document.getElementById('message-input').value.trim();
+            
+            if (message) {
+                // You can send this message to a server or save it locally
+                console.log('User message:', message);
+                
+                // Show thank you bubble
+                showSpeechBubble('HEHE,Thank you for sharing your beautiful words! 💖, I Love you so much my BBG 😽. NOW GIVE ME A PAPPA ALREADY 😔', window.innerWidth / 2, window.innerHeight / 2);
+                
+                closeMessageModal();
+            } else {
+                alert('Please write something before submitting! 💕');
+            }
+        }
+
+        // ========== QUIZ FUNCTIONALITY ==========
+        const quizQuestions = [
+            {
+                question: "Who am I to you? 🤨",
+                options: ["Your Man", "Your Husband", "Your Favorite Person", "Your Best Friend", "All of the above"],
+                correct: 4,
+                correctFeedback: "✨ Yes! You're absolutely right! I'm all of these and more! 💖",
+                incorrectFeedback: "❌ Come on, you know I'm more than that! Try again! 🥺"
+            },
+            {
+                question: "Am I annoying? 🤔",
+                options: [
+                    "Yes", 
+                    "Ofc, So annoying (😔💔)", 
+                    "Do you even have to ask this, Very Annoying", 
+                    "Eye Roll level annoying 🙄", 
+                    "No, Baby, You never will be annoying to me, Ever. Here is a kiss on your hand to prove it 😽"
+                ],
+                correct: 4,
+                correctFeedback: "💕 Aww! You always know how to make me smile! Love you so much! 😘",
+                incorrectFeedback: "💔 Ouch! That hurts... but I know you don't mean it. Try again! 🥺"
+            },
+            {
+                question: "What was the date on our first confession? 🤨",
+                options: ["24th September", "27th October", "24th November", "14th November"],
+                correct: 2,
+                correctFeedback: "🎉 Perfect! You remember our special day! 24th November will always be special to me! 💝",
+                incorrectFeedback: "❌ Think harder! It's a date we both cherish! 💭"
+            },
+            {
+                question: "What's your favorite thing to do??",
+                options: [
+                    "Talking to Ali Naseem", 
+                    "Spending time with Ali Naseem", 
+                    "Reading Books", 
+                    "Sleeping", 
+                    "Obviously, 1st and 2nd option, Anything with my Husband aka Ali Naseem is What I love to do."
+                ],
+                correct: 4,
+                correctFeedback: "💖 My heart is melting! You really do love spending time with me! 🥰",
+                incorrectFeedback: "😢 Really? Not even a little bit about me? Try again! 💔"
+            },
+            {
+                question: "If you get the chance to get any of your crushes (She has crushes 🙄🙄🙄🙄 It breaks my heart 😔💔) to come to life or to marry them, Who would you choose?? Me or them?",
+                options: [
+                    "Duhhh, Why Even bother to ask, Obv I'll choose them (💔)", 
+                    "Ofc the Crushes", 
+                    "Lolzzz, You Don't stand a chance against them", 
+                    "It would be pretty dumb to choose them over you, You Stoopad", 
+                    "I would choose you, My Husband, My Love, My Everything, I would choose you over and over again, I love you so much that I can't even imagine choosing anyone else over you. You are my world! 💖"
+                ],
+                correct: 4,
+                correctFeedback: "😭💖 This is the most beautiful thing ever! I love you infinitely! You're MY world too! 💕✨",
+                incorrectFeedback: "💔😭 My heart... it's breaking... Please reconsider! 🥺"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let quizActive = false;
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            quizActive = true;
+            document.getElementById('quiz-modal').classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-question').textContent = question.question;
+            document.getElementById('quiz-feedback').textContent = '';
+            document.getElementById('quiz-feedback').className = 'quiz-feedback';
+            document.getElementById('quiz-close').style.display = 'none';
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (selectedIndex === question.correct) {
+                // Correct answer
+                options[selectedIndex].classList.add('correct');
+                feedback.textContent = question.correctFeedback;
+                feedback.className = 'quiz-feedback correct';
+                
+                // Move to next question after delay
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < quizQuestions.length) {
+                        showQuestion();
+                    } else {
+                        showQuizComplete();
+                    }
+                }, 2000);
+            } else {
+                // Wrong answer
+                options[selectedIndex].classList.add('incorrect');
+                feedback.textContent = question.incorrectFeedback;
+                feedback.className = 'quiz-feedback incorrect';
+                
+                // Re-enable options after a moment
+                setTimeout(() => {
+                    options.forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.classList.remove('incorrect');
+                    });
+                    feedback.textContent = '';
+                }, 2000);
+            }
+        }
+
+        function showQuizComplete() {
+            document.getElementById('quiz-question').textContent = '🎉 Quiz Complete! 🎉';
+            document.getElementById('quiz-options').innerHTML = '';
+            document.getElementById('quiz-feedback').textContent = 'Congratulations, WOOOOOOHHHHOOOOOOOO, You answered all the questions correctly! Good Job my Love, Lets Move forward, Hehe, I Love you soooooooooooo sooooooo soooooooooooooo much my Cutie Babyyyy 😽😽😽😽💗💗💗';
+            document.getElementById('quiz-feedback').className = 'quiz-feedback correct';
+            document.getElementById('quiz-close').style.display = 'inline-block';
+        }
+
+        function closeQuiz() {
+            document.getElementById('quiz-modal').classList.remove('active');
+            quizActive = false;
+        }
+
+        // ========== NO BUTTON LOGIC ==========
+        function handleNoHover() {
+            if (noButtonMovable && hoverCount < 10) {
+                hoverCount++;
+                
+                // Show sassy message
+                const randomSass = sassTexts[Math.floor(Math.random() * sassTexts.length)];
+                messageBox.innerText = randomSass;
+                
+                // Move button to random position
+                const container = document.getElementById('proposal-container');
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = noBtn.getBoundingClientRect();
+                
+                const maxX = containerRect.width - btnRect.width - 20;
+                const maxY = containerRect.height - btnRect.height - 20;
+                
+                const randomX = Math.random() * maxX + 20;
+                const randomY = Math.random() * maxY + 20;
+                
+                noBtn.style.left = randomX + 'px';
+                noBtn.style.top = randomY + 'px';
+                
+                // After 10 hovers, make it immovable
+                if (hoverCount >= 10) {
+                    noButtonMovable = false;
+                    noBtn.style.position = 'relative';
+                    noBtn.style.left = 'auto';
+                    noBtn.style.top = 'auto';
+                    messageBox.innerText = "Okay, you win! Since you decided to break my heart 😔, You can click the No button now... but why would you do that to me ? 🥺";
+                }
+            }
+        }
+
+        function handleNoClick() {
+            if (!noButtonMovable) {
+                // Use old functionality after button stops moving
+                clickCount++;
+                
+                // Change text
+                const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
+                messageBox.innerText = randomText;
+                
+                // Make Yes button grow
+                let currentSize = 1.2 + (clickCount * 0.4);
+                yesBtn.style.fontSize = currentSize + 'rem';
+                yesBtn.style.padding = (15 + clickCount * 5) + 'px ' + (30 + clickCount * 10) + 'px';
+                
+                // Change bear to sad
+                bearImg.src = 'https://fonts.gstatic.com/s/e/notoemoji/latest/2639_fe0f/512.png';
+                bearImg.style.filter = 'grayscale(0.3)';
+                if(clickCount >= 3 && clickCount < 5) {
+                    bearImg.src = 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f614/512.png';
+                }
+                else if(clickCount >= 5 && clickCount < 7) {
+                    bearImg.src = 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f494/512.png';
+                }
+                else if(clickCount >= 7) {
+                    messageBox.innerText = "Okay, I get it... You don't want to be with me 😔. I'll stop asking now. But just know that I love you so much and I'll always be here for you, no matter what. 💔";
+            }
+        }
+}
+
+        // ========== CUSTOM CURSOR ==========
+        const cursor = document.getElementById('custom-cursor');
+        let lastTrailTime = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // Create trail effect
+            const now = Date.now();
+            if (now - lastTrailTime > 50) {
+                createCursorTrail(e.clientX, e.clientY);
+                lastTrailTime = now;
+            }
+        });
+
+        function createCursorTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.innerHTML = ['💖', '💕', '✨', '⭐'][Math.floor(Math.random() * 4)];
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            document.body.appendChild(trail);
+            
+            setTimeout(() => trail.remove(), 1000);
+        }
+
+        // ========== BALLOONS ==========
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon floating';
+            balloon.innerHTML = '<div class="balloon-shape"></div><div class="balloon-string"></div>';
+            balloon.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+            balloon.style.bottom = '-100px';
+            
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            // Click to pop
+            balloon.addEventListener('click', (e) => {
+                if (!isDragging) {
+                    balloon.classList.remove('floating');
+                    balloon.classList.add('popped');
+                    setTimeout(() => balloon.remove(), 300);
+                }
+            });
+
+            // Drag functionality
+            balloon.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                balloon.classList.remove('floating');
+                offsetX = e.clientX - balloon.offsetLeft;
+                offsetY = e.clientY - balloon.offsetTop;
+                balloon.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && balloon.parentElement) {
+                    balloon.style.left = (e.clientX - offsetX) + 'px';
+                    balloon.style.bottom = 'auto';
+                    balloon.style.top = (e.clientY - offsetY) + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    balloon.style.cursor = 'pointer';
+                    balloon.classList.add('floating');
+                    
+                    // Reset animation
+                    balloon.style.animation = 'none';
+                    setTimeout(() => {
+                        balloon.style.animation = 'float-up 15s linear infinite';
+                    }, 10);
+                }
+            });
+
+            document.body.appendChild(balloon);
+
+            // Remove when off screen
+            setTimeout(() => {
+                if (balloon.parentElement) balloon.remove();
+            }, 15000);
+        }
+
+        // Spawn balloons periodically
+        setInterval(createBalloon, 1000);
+        
+        // Initial balloons
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createBalloon, i * 500);
+        }
+
+        // ========== FALLING HEARTS FROM TREES ==========
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'falling-heart';
+            heart.innerHTML = ['💗', '💖', '💕', '💓'][Math.floor(Math.random() * 4)];
+            heart.style.left = (Math.random() < 0.5 ? Math.random() * 20 : 80 + Math.random() * 20) + '%';
+            heart.style.top = '10%';
+            heart.style.animationDuration = (5 + Math.random() * 3) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 10000);
+        }
+
+        setInterval(createFallingHeart, 2000);
+
+        // ========== EASTER EGG COMPLIMENTS ==========
+        const easterEggs = {
+            '#tree-left': {
+                message: "My love for you grows taller than this tree! 🌳",
+                action: null
+            },
+            '#tree-right': {
+                message: "Like this tree, my love is rooted deep! Want to share your feelings? 🌸",
+                action: null
+            },
+            '#cloud-1': {
+                message: "Let's play a quiz! Click again to start! 🌟",
+                action: startQuiz
+            },
+            '#cloud-2': {
+                message: "You make my heart float like a cloud! 💭",
+                action: null
+            },
+            '#egg-1': {
+                message: "You're egg-stra special to me! 🥚💖",
+                action: null
+            },
+            '#egg-2': {
+                message: "Our love is the sweetest surprise! 🎀",
+                action: null
+            },
+            '#egg-3': {
+                message: "You color my world beautiful! 🌈",
+                action: null
+            },
+            '#egg-4': {
+                message: "Every day with you is a celebration! 🎉",
+                action: openMessageModal
+            },
+            '#bear-img': {
+                message: "I love your warm hugs! 🤗",
+                action: null
+            }
+        };
+
+        Object.keys(easterEggs).forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.addEventListener('click', (e) => {
+                    const egg = easterEggs[selector];
+                    showSpeechBubble(egg.message, e.clientX, e.clientY);
+                    
+                    // If there's an action (like starting quiz or opening message modal), execute it
+                    if (egg.action) {
+                        setTimeout(() => {
+                            egg.action();
+                        }, 500);
+                    }
+                });
+            }
+        });
+
+        function showSpeechBubble(message, x, y) {
+            // Remove any existing bubbles
+            const existingBubbles = document.querySelectorAll('.speech-bubble');
+            existingBubbles.forEach(b => b.remove());
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'speech-bubble';
+            bubble.textContent = message;
+            
+            // Position the bubble above the click point
+            bubble.style.left = Math.max(125, Math.min(window.innerWidth - 125, x)) - 125 + 'px';
+            bubble.style.top = Math.max(100, y - 100) + 'px';
+            
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => bubble.remove(), 3000);
+        }
+
+        // ========== YES BUTTON LOGIC ==========
+        function acceptProposal() {
+            // Change bear to happy
+            bearImg.src = 'https://em-content.zobj.net/source/apple/391/smiling-face-with-heart-eyes_1f60d.png';
+            bearImg.style.filter = 'none';
+            
+            setTimeout(() => {
+                proposalContainer.style.display = 'none';
+                celebrationContainer.style.display = 'block';
+                
+                setTimeout(() => {
+                    celebrationContainer.style.opacity = '1';
+                    startFlowerCelebration();
+                }, 50);
+            }, 500);
+        }
+
+        // ========== FLOWER CELEBRATION - FULL SCREEN ==========
+        function startFlowerCelebration() {
+            const flowers = ['🌸', '🌺', '🌹', '🌷', '🌼', '💐', '🥀', '🌻', '💗','💖','💝','💓','💞','💕','💘','💌','😘','😽','😚'];
+            
+            // Create flowers across the entire screen width
+            for (let i = 0; i < 450; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'flower-petal';
+                    petal.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+                    
+                    // Random position across entire width
+                    petal.style.left = Math.random() * 100 + '%';
+                    petal.style.top = '-50px';
+                    
+                    petal.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    petal.style.animationDelay = (Math.random() * 0.3) + 's';
+                    
+                    document.body.appendChild(petal);
+                    
+                    setTimeout(() => petal.remove(), 5000);
+                }, i * 15);
+            }
+        }
+
+        // ========== MUSIC TOGGLE ==========
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            
+            if (!musicPlaying) {
+                // Show dedication modal instead of playing directly
+                showDedicationModal();
+            } else {
+                // Pause the audio
+                audioElement.pause();
+                btn.textContent = '🎵 Play Music';
+                musicPlaying = false;
+                
+                // Hide lyrics
+                document.getElementById('lyrics-container').classList.remove('active');
+            }
+        }
+
+        // Reset music when it ends
+        audioElement.addEventListener('ended', () => {
+            musicPlaying = false;
+            document.getElementById('music-toggle').textContent = '🎵 Play Music';
+            document.getElementById('lyrics-container').classList.remove('active');
+        });
+
+    </script>
+</body>
+</html>
